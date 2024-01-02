@@ -1,3 +1,3 @@
-# 🐧 puffin
+# 🐧 Puffin
 
-Sending emails made complicated
+Sending emails made complicated.
