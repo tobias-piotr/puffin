@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  go:
+    build:
+      dockerfile: ./docker/Dockerfile
+      target: dev
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    ports:
+      - 8008:8008
+    stdin_open: true
+    tty: true
