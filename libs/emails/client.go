@@ -6,6 +6,7 @@ import (
 	"os"
 )
 
+// SmtpClient represents a client for sending emails.
 type SmtpClient struct {
 	Email    string
 	Password string
@@ -26,6 +27,7 @@ func (c SmtpClient) GetAddr() string {
 	return fmt.Sprintf("%s:%d", c.Host, c.Port)
 }
 
+// SendEmail sends an email to the given receivers.
 func (c SmtpClient) SendEmail(receivers []string, message []byte) error {
 	auth := smtp.PlainAuth("", c.Email, c.Password, c.Host)
 	return smtp.SendMail(c.GetAddr(), auth, c.Email, receivers, message)

@@ -2,38 +2,40 @@ package server
 
 import (
 	"fmt"
+	"log/slog"
 	"net/http"
+	"os"
 	"time"
 
 	emails "puffin/emails/api"
+	"puffin/libs/api"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
-	"github.com/go-chi/render"
 )
 
 type HealthResponse struct {
 	Status string `json:"status"`
 }
 
-func (h *HealthResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	return nil
-}
-
 func CheckHealth(w http.ResponseWriter, r *http.Request) {
-	render.Render(w, r, &HealthResponse{Status: "ok"})
+	api.Respond(w, http.StatusOK, &HealthResponse{Status: "ok"})
 }
 
-func CreateServer(prefix string) chi.Router {
+func CreateServer() chi.Router {
+	slog.Info("Creating server")
+
+	prefix := os.Getenv("API_PREFIX")
+
 	r := chi.NewRouter()
 
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
-	r.Use(middleware.Logger)
+	r.Use(NewLoggingMiddleware())
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	r.Route(fmt.Sprintf("/%s/api", prefix), func(r chi.Router) {
+	r.Route(fmt.Sprintf("%s/api", prefix), func(r chi.Router) {
 		r.Get("/health", CheckHealth)
 
 		r.Route("/v1", func(r chi.Router) {

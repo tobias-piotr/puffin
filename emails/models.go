@@ -6,10 +6,11 @@ import (
 
 // TemplateData represents data used for creating new email templates.
 type TemplateData struct {
-	Name    string
-	Content string
+	Name    string `validate:"required,min=3,max=255"`
+	Content string `validate:"required"`
 }
 
+// Template represents an email template.
 type Template struct {
 	Id      uuid.UUID
 	Name    string
@@ -24,6 +25,7 @@ type EmailData struct {
 	Context      map[string]interface{}
 }
 
+// Email represents an email with all its data.
 type Email struct {
 	Id           uuid.UUID
 	TemplateName string
