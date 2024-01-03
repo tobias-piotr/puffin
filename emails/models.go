@@ -7,7 +7,7 @@ import (
 // TemplateData represents data used for creating new email templates.
 type TemplateData struct {
 	Name    string `validate:"required,min=3,max=255"`
-	Content string `validate:"required,min=3,endswith=html"`
+	Content string `validate:"required"`
 }
 
 // Template represents an email template.
