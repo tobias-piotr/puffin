@@ -1,18 +1,27 @@
 package emails
 
+import "log/slog"
+
 type EmailService struct {
 	emailRepository EmailRepository
 	emailClient     EmailClient
 }
 
-func (s EmailService) CreateNewTemplate() (Template, error) {
-	return Template{}, nil // TODO
+func NewEmailService(emailRepository EmailRepository, emailClient EmailClient) EmailService {
+	return EmailService{emailRepository: emailRepository, emailClient: emailClient}
+}
+
+func (s EmailService) CreateNewTemplate(data *TemplateData) (Template, error) {
+	slog.Info("Creating new template")
+	return s.emailRepository.CreateNewTemplate(data)
 }
 
 func (s EmailService) GetTemplates() ([]Template, error) {
-	return []Template{}, nil // TODO
+	slog.Info("Getting templates")
+	return s.emailRepository.GetTemplates()
 }
 
 func (s EmailService) SendEmail() error {
+	slog.Info("Sending email")
 	return s.emailClient.SendEmail()
 }

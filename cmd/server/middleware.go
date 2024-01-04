@@ -11,6 +11,13 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
+func SetContentType(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
+}
+
 func NewLoggingMiddleware() func(next http.Handler) http.Handler {
 	if os.Getenv("DEBUG") == "true" {
 		return middleware.Logger

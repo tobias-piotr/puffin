@@ -1,6 +1,6 @@
 package emails
 
 type EmailRepository interface {
-	CreateNewTemplate() (Email, error)
+	CreateNewTemplate(data *TemplateData) (Template, error)
 	GetTemplates() ([]Template, error)
 }
