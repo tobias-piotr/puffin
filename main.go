@@ -7,5 +7,6 @@ import (
 )
 
 func main() {
+	// TODO: Add dependecies here
 	http.ListenAndServe(":8008", server.CreateServer())
 }
