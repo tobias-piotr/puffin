@@ -12,9 +12,9 @@ type TemplateData struct {
 
 // Template represents an email template.
 type Template struct {
-	Id      uuid.UUID
-	Name    string
-	Content string
+	ID      uuid.UUID `json:"id"`
+	Name    string    `json:"name"`
+	Content string    `json:"content"`
 }
 
 // EmailData represents data used for sending emails.
@@ -27,9 +27,9 @@ type EmailData struct {
 
 // Email represents an email with all its data.
 type Email struct {
-	Id           uuid.UUID
-	TemplateName string
-	To           string
-	Subject      string
-	Context      map[string]interface{}
+	ID           uuid.UUID              `json:"id"`
+	TemplateName string                 `json:"template_name"`
+	To           string                 `json:"to"`
+	Subject      string                 `json:"subject"`
+	Context      map[string]interface{} `json:"context"`
 }

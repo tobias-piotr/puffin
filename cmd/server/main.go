@@ -18,7 +18,7 @@ type HealthResponse struct {
 	Status string `json:"status"`
 }
 
-func CheckHealth(w http.ResponseWriter, r *http.Request) {
+func CheckHealth(w http.ResponseWriter, _ *http.Request) {
 	api.Respond(w, http.StatusOK, &HealthResponse{Status: "ok"})
 }
 
@@ -32,6 +32,7 @@ func CreateServer() chi.Router {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(NewLoggingMiddleware())
+	r.Use(SetContentType)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
