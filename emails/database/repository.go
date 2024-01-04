@@ -9,7 +9,7 @@ import (
 type EmailRepository struct{}
 
 func (r EmailRepository) CreateNewTemplate(data *emails.TemplateData) (emails.Template, error) {
-	return emails.Template{ID: uuid.New(), Name: "test_template", Content: "test content"}, nil
+	return emails.Template{ID: uuid.New(), Name: data.Name, Content: data.Content}, nil
 }
 
 func (r EmailRepository) GetTemplates() ([]emails.Template, error) {

@@ -1,5 +1,5 @@
 package emails
 
 type EmailClient interface {
-	SendEmail() error
+	SendEmail(data *EmailData) error
 }

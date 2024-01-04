@@ -21,7 +21,7 @@ func (s EmailService) GetTemplates() ([]Template, error) {
 	return s.emailRepository.GetTemplates()
 }
 
-func (s EmailService) SendEmail() error {
+func (s EmailService) SendEmail(data *EmailData) error {
 	slog.Info("Sending email")
-	return s.emailClient.SendEmail()
+	return s.emailClient.SendEmail(data)
 }
