@@ -11,12 +11,12 @@ func NewEmailService(emailRepository EmailRepository, emailClient EmailClient) E
 	return EmailService{emailRepository: emailRepository, emailClient: emailClient}
 }
 
-func (s EmailService) CreateNewTemplate(data *TemplateData) (Template, error) {
+func (s EmailService) CreateNewTemplate(data *TemplateData) (*Template, error) {
 	slog.Info("Creating new template")
 	return s.emailRepository.CreateNewTemplate(data)
 }
 
-func (s EmailService) GetTemplates() ([]Template, error) {
+func (s EmailService) GetTemplates() (*[]Template, error) {
 	slog.Info("Getting templates")
 	return s.emailRepository.GetTemplates()
 }

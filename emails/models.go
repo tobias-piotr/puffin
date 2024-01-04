@@ -9,6 +9,7 @@ type TemplateData struct {
 	Name    string `validate:"required,min=3,max=255"`
 	Content string `validate:"required"`
 	// TODO: Add support for attachments
+	// TODO: Add create date, make name unique
 }
 
 // Template represents an email template.

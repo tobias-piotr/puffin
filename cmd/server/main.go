@@ -22,7 +22,7 @@ func CheckHealth(w http.ResponseWriter, _ *http.Request) {
 	api.Respond(w, http.StatusOK, &HealthResponse{Status: "ok"})
 }
 
-func CreateServer() chi.Router {
+func CreateServer(opts *Options) chi.Router {
 	slog.Info("Creating server")
 
 	prefix := os.Getenv("API_PREFIX")
@@ -40,7 +40,7 @@ func CreateServer() chi.Router {
 		r.Get("/health", CheckHealth)
 
 		r.Route("/v1", func(r chi.Router) {
-			emails.Register(r)
+			emails.Register(r, opts.DB)
 		})
 	})
 

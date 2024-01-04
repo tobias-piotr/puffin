@@ -9,6 +9,17 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-20.04
+    env:
+      DATABASE_DSN: "host=localhost port=5432 user=postgres dbname=test password=postgres sslmode=disable"
+    services:
+      postgres:
+        image: postgres:16-alpine
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
     steps:
       - uses: actions/checkout@v3
 
@@ -34,3 +45,5 @@ jobs:
 
       - name: Run tests
         run: go test -race -vet=off ./...
+
+      # TODO: Add swagger
