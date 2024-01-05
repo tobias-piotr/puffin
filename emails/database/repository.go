@@ -31,12 +31,12 @@ func (r EmailRepository) CreateNewTemplate(data *emails.TemplateData) (*emails.T
 	return &template, err
 }
 
-func (r EmailRepository) GetTemplates() (*[]emails.Template, error) {
+func (r EmailRepository) GetTemplates() ([]emails.Template, error) {
 	query := `
 	SELECT id, name, content
 	FROM templates;
 	`
-	templates := &[]emails.Template{}
-	err := r.db.Select(templates, query)
+	templates := []emails.Template{}
+	err := r.db.Select(&templates, query)
 	return templates, err
 }

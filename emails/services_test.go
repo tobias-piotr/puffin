@@ -15,8 +15,8 @@ func (r *DummyEmailRepository) CreateNewTemplate(data *TemplateData) (*Template,
 	return &Template{uuid.New(), data.Name, data.Content}, nil
 }
 
-func (r *DummyEmailRepository) GetTemplates() (*[]Template, error) {
-	return &r.templates, nil
+func (r *DummyEmailRepository) GetTemplates() ([]Template, error) {
+	return r.templates, nil
 }
 
 type DummyEmailClient struct{}
@@ -38,5 +38,5 @@ func TestGetTemplates(t *testing.T) {
 	srv := NewEmailService(repo, &DummyEmailClient{})
 	result, error := srv.GetTemplates()
 	assert.Nil(t, error)
-	assert.Equal(t, 1, len(*result))
+	assert.Equal(t, 1, len(result))
 }
