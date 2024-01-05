@@ -2,7 +2,8 @@
 -- +goose StatementBegin
 CREATE TABLE templates (
 	id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-	name VARCHAR(255) NOT NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	name VARCHAR(255) NOT NULL UNIQUE,
 	content TEXT
 );
 -- +goose StatementEnd

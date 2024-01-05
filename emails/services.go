@@ -1,6 +1,12 @@
 package emails
 
-import "log/slog"
+import (
+	"fmt"
+	"log/slog"
+	"net/http"
+
+	"puffin/libs/api"
+)
 
 type EmailService struct {
 	emailRepository EmailRepository
@@ -13,6 +19,17 @@ func NewEmailService(emailRepository EmailRepository, emailClient EmailClient) E
 
 func (s EmailService) CreateNewTemplate(data *TemplateData) (*Template, error) {
 	slog.Info("Creating new template", "name", data.Name)
+	templates, err := s.emailRepository.FilterTemplates(EmailFilters{"name": data.Name})
+	if err != nil {
+		return &Template{}, err
+	}
+	if len(templates) > 0 {
+		return &Template{}, api.NewAPIError(
+			http.StatusConflict,
+			fmt.Sprintf("Template with name %s already exists", data.Name),
+			nil,
+		)
+	}
 	return s.emailRepository.CreateNewTemplate(data)
 }
 
