@@ -11,8 +11,8 @@ import (
 var validate = validator.New(validator.WithRequiredStructEnabled())
 
 // Decode decodes the request body into the target.
-func Decode(r *http.Request, target any) error {
-	return json.NewDecoder(r.Body).Decode(target)
+func Decode(r *http.Request, dest any) error {
+	return json.NewDecoder(r.Body).Decode(dest)
 }
 
 // Validate validates a struct data.
@@ -22,12 +22,12 @@ func Validate(data any) error {
 
 // DecodeAndValidate is a shortcut for Decode and Validate.
 // It also parses the error into an APIError.
-func DecodeAndValidate(r *http.Request, target any) error {
-	if err := json.NewDecoder(r.Body).Decode(target); err != nil {
+func DecodeAndValidate(r *http.Request, dest any) error {
+	if err := json.NewDecoder(r.Body).Decode(dest); err != nil {
 		return NewAPIError(http.StatusBadRequest, "Invalid request body", nil)
 	}
 
-	err := validate.Struct(target)
+	err := validate.Struct(dest)
 	if err != nil {
 		validationErrors := err.(validator.ValidationErrors)
 		errors := make(map[string]string)

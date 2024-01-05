@@ -1,6 +1,8 @@
 package emails
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
@@ -9,14 +11,14 @@ type TemplateData struct {
 	Name    string `validate:"required,min=3,max=255"`
 	Content string `validate:"required"`
 	// TODO: Add support for attachments
-	// TODO: Add create date, make name unique
 }
 
 // Template represents an email template.
 type Template struct {
-	ID      uuid.UUID `json:"id"`
-	Name    string    `json:"name"`
-	Content string    `json:"content"`
+	ID        uuid.UUID `json:"id"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+	Name      string    `json:"name"`
+	Content   string    `json:"content"`
 }
 
 // EmailData represents data used for sending emails.

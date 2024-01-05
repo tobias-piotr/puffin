@@ -35,6 +35,22 @@ func (s *EmailAPISuite) TestCreateTemplate() {
 	s.Equal("<h1>Test Content</h1>", responseBody.Content)
 }
 
+func (s *EmailAPISuite) TestCreateDuplicateTemplate() {
+	router := server.CreateServer(&server.Options{DB: s.DB})
+
+	// Create a template
+	body := []byte(`{"name":"Test Name","content":"<h1>Test Content</h1>"}`)
+	req := tests.CreateRequest("POST", "/api/v1/templates", body)
+	tests.RecordCall(req, router)
+
+	// Make the same request again
+	req = tests.CreateRequest("POST", "/api/v1/templates", body)
+	response := tests.RecordCall(req, router)
+
+	s.Equal(http.StatusConflict, response.Code)
+	s.Equal(`{"error":"Template with name Test Name already exists"}`, response.Body.String())
+}
+
 func (s *EmailAPISuite) TestGetTemplates() {
 	router := server.CreateServer(&server.Options{DB: s.DB})
 
@@ -43,6 +59,7 @@ func (s *EmailAPISuite) TestGetTemplates() {
 	req := tests.CreateRequest("POST", "/api/v1/templates", body)
 	tests.RecordCall(req, router)
 
+	// Get all templates
 	req = tests.CreateRequest("GET", "/api/v1/templates", nil)
 	response := tests.RecordCall(req, router)
 
