@@ -11,8 +11,8 @@ type DummyEmailRepository struct {
 	templates []Template
 }
 
-func (r *DummyEmailRepository) CreateNewTemplate(data *TemplateData) (Template, error) {
-	return Template{uuid.New(), data.Name, data.Content}, nil
+func (r *DummyEmailRepository) CreateNewTemplate(data *TemplateData) (*Template, error) {
+	return &Template{uuid.New(), data.Name, data.Content}, nil
 }
 
 func (r *DummyEmailRepository) GetTemplates() ([]Template, error) {

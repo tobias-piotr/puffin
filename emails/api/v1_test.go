@@ -1,48 +1,54 @@
 package api_test
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"puffin/cmd/server"
 	"puffin/emails"
+	"puffin/internal/tests"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func record(req *http.Request, handler http.Handler) *httptest.ResponseRecorder {
-	rr := httptest.NewRecorder()
-	handler.ServeHTTP(rr, req)
-	return rr
+type EmailAPISuite struct {
+	tests.SuiteWithDB
 }
 
-func TestCreateTemplate(t *testing.T) {
-	router := server.CreateServer()
+func TestEmailAPISuite(t *testing.T) {
+	suite.Run(t, new(EmailAPISuite))
+}
+
+func (s *EmailAPISuite) TestCreateTemplate() {
+	router := server.CreateServer(&server.Options{DB: s.DB})
 
 	body := []byte(`{"name":"Test Name","content":"<h1>Test Content</h1>"}`)
-	req, _ := http.NewRequest("POST", "/api/v1/templates", bytes.NewBuffer(body))
-	response := record(req, router)
+	req := tests.CreateRequest("POST", "/api/v1/templates", body)
+	response := tests.RecordCall(req, router)
 
 	responseBody := emails.Template{}
 	json.Unmarshal(response.Body.Bytes(), &responseBody)
 
-	assert.Equal(t, http.StatusCreated, response.Code)
-	assert.Equal(t, "Test Name", responseBody.Name)
-	assert.Equal(t, "<h1>Test Content</h1>", responseBody.Content)
+	s.Equal(http.StatusCreated, response.Code)
+	s.Equal("Test Name", responseBody.Name)
+	s.Equal("<h1>Test Content</h1>", responseBody.Content)
 }
 
-func TestGetTemplates(t *testing.T) {
-	router := server.CreateServer()
+func (s *EmailAPISuite) TestGetTemplates() {
+	router := server.CreateServer(&server.Options{DB: s.DB})
 
-	req, _ := http.NewRequest("GET", "/api/v1/templates", nil)
-	response := record(req, router)
+	// Create a template
+	body := []byte(`{"name":"Test Name","content":"<h1>Test Content</h1>"}`)
+	req := tests.CreateRequest("POST", "/api/v1/templates", body)
+	tests.RecordCall(req, router)
+
+	req = tests.CreateRequest("GET", "/api/v1/templates", nil)
+	response := tests.RecordCall(req, router)
 
 	responseBody := []emails.Template{}
 	json.Unmarshal(response.Body.Bytes(), &responseBody)
 
-	assert.Equal(t, http.StatusOK, response.Code)
-	assert.Equal(t, 2, len(responseBody))
+	s.Equal(http.StatusOK, response.Code)
+	s.Equal(1, len(responseBody))
 }

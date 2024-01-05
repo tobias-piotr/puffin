@@ -8,6 +8,7 @@ import (
 	"puffin/libs/api"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/jmoiron/sqlx"
 )
 
 type EmailHandler struct {
@@ -40,8 +41,13 @@ func (h *EmailHandler) GetTemplates(w http.ResponseWriter, _ *http.Request) {
 	api.Respond(w, http.StatusOK, t)
 }
 
-func Register(r chi.Router) {
-	handler := EmailHandler{emails.NewEmailService(database.EmailRepository{}, nil)}
+func Register(r chi.Router, db *sqlx.DB) {
+	handler := EmailHandler{
+		emails.NewEmailService(
+			database.NewEmailRepository(db),
+			nil,
+		),
+	}
 
 	r.Route("/templates", func(r chi.Router) {
 		r.Post("/", handler.CreateNewTemplate)
