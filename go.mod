@@ -21,10 +21,13 @@ require (
 	golang.org/x/sync v0.5.0 // indirect
 	golang.org/x/sys v0.15.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
+	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
+	gopkg.in/mail.v2 v2.3.1 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
 require (
+	github.com/go-mail/mail v2.3.1+incompatible
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/lib/pq v1.10.9
