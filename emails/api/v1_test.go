@@ -93,3 +93,14 @@ func (s *EmailAPISuite) TestSendEmail() {
 	// TODO: Replace with database check
 	s.Equal(1, len(s.Dialer.Emails))
 }
+
+func (s *EmailAPISuite) TestSendEmailNoTemplate() {
+	router := server.CreateServer(&server.Options{DB: s.DB})
+
+	body := []byte(`{"to":["test@gmail.com"],"template_name":"test","subject":"Test","data":{"name":"Test Name"}}`)
+	req := tests.CreateRequest("POST", "/api/v1/emails", body)
+	response := tests.RecordCall(req, router)
+
+	s.Equal(http.StatusNotFound, response.Code)
+	s.Equal(`{"error":"Template with name test does not exist"}`, response.Body.String())
+}
