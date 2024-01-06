@@ -39,6 +39,28 @@ func (s EmailService) GetTemplates() ([]Template, error) {
 }
 
 func (s EmailService) SendEmail(data *EmailData) error {
-	slog.Info("Sending email", "template", data.TemplateName)
-	return s.emailClient.SendEmail(data)
+	slog.Info("Sending email", "template", data.TemplateName, "to", data.To)
+
+	// Get template
+	templates, err := s.emailRepository.FilterTemplates(EmailFilters{"name": data.TemplateName})
+	if err != nil {
+		return err
+	}
+	if len(templates) == 0 {
+		return api.NewAPIError(
+			http.StatusNotFound,
+			fmt.Sprintf("Template with name %s does not exist", data.TemplateName),
+			nil,
+		)
+	}
+
+	// Build email
+	email, err := s.emailClient.BuildEmail(templates[0].Content, data.Context)
+	if err != nil {
+		return err
+	}
+
+	// Send email
+	// TODO: Save it to database
+	return s.emailClient.SendEmail(data.To, data.Subject, email)
 }

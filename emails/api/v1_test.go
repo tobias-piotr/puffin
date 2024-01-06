@@ -14,6 +14,12 @@ import (
 
 type EmailAPISuite struct {
 	tests.SuiteWithDB
+	Dialer *tests.DummyDialer
+}
+
+func (s *EmailAPISuite) SetupSuite() {
+	s.SuiteWithDB.SetupSuite()
+	s.Dialer = &tests.DummyDialer{}
 }
 
 func TestEmailAPISuite(t *testing.T) {
@@ -68,4 +74,22 @@ func (s *EmailAPISuite) TestGetTemplates() {
 
 	s.Equal(http.StatusOK, response.Code)
 	s.Equal(1, len(responseBody))
+}
+
+func (s *EmailAPISuite) TestSendEmail() {
+	router := server.CreateServer(&server.Options{DB: s.DB, SmtpDialer: s.Dialer})
+
+	// Create a template
+	body := []byte(`{"name":"test","content":"<h1>Hello {{.name}}</h1>"}`)
+	req := tests.CreateRequest("POST", "/api/v1/templates", body)
+	tests.RecordCall(req, router)
+
+	// Send an email
+	body = []byte(`{"to":["test@gmail.com"],"template_name":"test","subject":"Test","data":{"name":"Test Name"}}`)
+	req = tests.CreateRequest("POST", "/api/v1/emails", body)
+	response := tests.RecordCall(req, router)
+
+	s.Equal(http.StatusOK, response.Code)
+	// TODO: Replace with database check
+	s.Equal(1, len(s.Dialer.Emails))
 }

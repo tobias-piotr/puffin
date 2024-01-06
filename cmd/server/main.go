@@ -40,7 +40,7 @@ func CreateServer(opts *Options) chi.Router {
 		r.Get("/health", CheckHealth)
 
 		r.Route("/v1", func(r chi.Router) {
-			emails.Register(r, opts.DB)
+			emails.Register(r, opts.DB, opts.SmtpDialer)
 		})
 	})
 

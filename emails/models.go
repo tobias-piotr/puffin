@@ -21,19 +21,23 @@ type Template struct {
 	Content   string    `json:"content"`
 }
 
+// EmailContext is a map of variables used in email templates.
+type EmailContext map[string]any
+
 // EmailData represents data used for sending emails.
 type EmailData struct {
-	TemplateName string
-	To           string
-	Subject      string
-	Context      map[string]interface{}
+	TemplateName string       `json:"template_name" validate:"required"`
+	To           []string     `json:"to" validate:"required"`
+	Subject      string       `json:"subject" validate:"required"`
+	Context      EmailContext `json:"context"`
+	// TODO: Validate email addresses
 }
 
 // Email represents an email with all its data.
 type Email struct {
-	ID           uuid.UUID              `json:"id"`
-	TemplateName string                 `json:"template_name"`
-	To           string                 `json:"to"`
-	Subject      string                 `json:"subject"`
-	Context      map[string]interface{} `json:"context"`
+	ID           uuid.UUID    `json:"id"`
+	TemplateName string       `json:"template_name"`
+	To           string       `json:"to"`
+	Subject      string       `json:"subject"`
+	Context      EmailContext `json:"context"`
 }
