@@ -3,6 +3,7 @@ package smtp
 import (
 	"bytes"
 	"html/template"
+	"log/slog"
 	"os"
 
 	"github.com/go-mail/mail"
@@ -38,6 +39,8 @@ func (c SmtpClient) BuildEmail(tmpl string, context map[string]any) ([]byte, err
 
 // SendEmail sends an email to the given receivers.
 func (c SmtpClient) SendEmail(receivers []string, subject string, email []byte) error {
+	slog.Info("Sending email", "to", receivers, "subject", subject)
+
 	m := mail.NewMessage()
 
 	m.SetHeader("From", c.Email)

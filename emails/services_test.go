@@ -12,6 +12,7 @@ import (
 // to allow testing business logic.
 type DummyEmailRepository struct {
 	templates []Template
+	emails    []Email
 }
 
 func (r *DummyEmailRepository) CreateNewTemplate(data *TemplateData) (*Template, error) {
@@ -24,6 +25,14 @@ func (r *DummyEmailRepository) GetTemplates() ([]Template, error) {
 
 func (r *DummyEmailRepository) FilterTemplates(filters EmailFilters) ([]Template, error) {
 	return r.templates, nil
+}
+
+func (r *DummyEmailRepository) SaveEmail(data *EmailData) (*Email, error) {
+	return &Email{uuid.New(), time.Now(), data.TemplateName, data.Recipients, data.Subject, data.Context}, nil
+}
+
+func (r *DummyEmailRepository) GetEmails() ([]Email, error) {
+	return r.emails, nil
 }
 
 // DummyEmailClient is a dummy email client that saves emails in memory.

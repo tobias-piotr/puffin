@@ -57,6 +57,17 @@ func (h *EmailHandler) SendEmail(w http.ResponseWriter, r *http.Request) {
 	api.Respond(w, http.StatusOK, nil)
 }
 
+func (h *EmailHandler) GetEmails(w http.ResponseWriter, r *http.Request) {
+	emails, err := h.service.GetEmails()
+	if err != nil {
+		api.RespondWithErr(w, err)
+		return
+	}
+
+	api.Respond(w, http.StatusOK, emails)
+}
+
+// TODO: Add swagger docs
 func Register(r chi.Router, db *sqlx.DB, smtpDialer smtp.Dialer) {
 	handler := EmailHandler{
 		emails.NewEmailService(
@@ -72,5 +83,6 @@ func Register(r chi.Router, db *sqlx.DB, smtpDialer smtp.Dialer) {
 
 	r.Route("/emails", func(r chi.Router) {
 		r.Post("/", handler.SendEmail)
+		r.Get("/", handler.GetEmails)
 	})
 }

@@ -25,7 +25,7 @@ func (e APIError) Error() string {
 func RespondWithErr(w http.ResponseWriter, err error) error {
 	aerr, ok := err.(APIError)
 	if !ok {
-		slog.Error("Internal server error", "err", err)
+		slog.Error("Internal server error", "error", err)
 		aerr = NewAPIError(http.StatusInternalServerError, "Internal server error", nil)
 	}
 	w.WriteHeader(aerr.StatusCode)

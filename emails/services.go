@@ -39,7 +39,7 @@ func (s EmailService) GetTemplates() ([]Template, error) {
 }
 
 func (s EmailService) SendEmail(data *EmailData) error {
-	slog.Info("Sending email", "template", data.TemplateName, "to", data.To)
+	slog.Info("Sending email", "template", data.TemplateName, "to", data.Recipients)
 
 	// Get template
 	templates, err := s.emailRepository.FilterTemplates(EmailFilters{"name": data.TemplateName})
@@ -61,6 +61,17 @@ func (s EmailService) SendEmail(data *EmailData) error {
 	}
 
 	// Send email
-	// TODO: Save it to database
-	return s.emailClient.SendEmail(data.To, data.Subject, email)
+	if err := s.emailClient.SendEmail(data.Recipients, data.Subject, email); err != nil {
+		slog.Error("Error sending email", "error", err)
+		return err
+	}
+
+	// Save email
+	_, err = s.emailRepository.SaveEmail(data)
+	return err
+}
+
+func (s EmailService) GetEmails() ([]Email, error) {
+	slog.Info("Getting emails")
+	return s.emailRepository.GetEmails()
 }

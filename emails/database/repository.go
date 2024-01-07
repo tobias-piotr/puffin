@@ -2,11 +2,12 @@ package database
 
 import (
 	"fmt"
-	"strings"
 
 	"puffin/emails"
+	"puffin/libs/database"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 )
 
 // EmailRepository handles all database operations for emails.
@@ -49,7 +50,7 @@ func (r EmailRepository) FilterTemplates(filters emails.EmailFilters) ([]emails.
 	SELECT id, created_at, name, content
 	FROM templates
 	WHERE %s;
-	`, convertMapToArgsStr(filters))
+	`, database.ConvertMapToArgsStr(filters))
 	stmt, err := r.db.PrepareNamed(query)
 	if err != nil {
 		return []emails.Template{}, err
@@ -60,10 +61,44 @@ func (r EmailRepository) FilterTemplates(filters emails.EmailFilters) ([]emails.
 	return templates, err
 }
 
-func convertMapToArgsStr(filters map[string]any) string {
-	args := []string{}
-	for key := range filters {
-		args = append(args, fmt.Sprintf("%s = :%s", key, key))
+func (r EmailRepository) SaveEmail(data *emails.EmailData) (*emails.Email, error) {
+	query := `
+	INSERT INTO emails (template_name, recipients, subject, context)
+	VALUES (:template_name, :recipients, :subject, :context)
+	RETURNING id, created_at, template_name, recipients, subject, context;
+	`
+	dbData := EmailData{*data, pq.StringArray(data.Recipients), database.JSON(data.Context)}
+	query, args, err := r.db.BindNamed(query, dbData)
+	if err != nil {
+		return &emails.Email{}, err
 	}
-	return strings.Join(args, " AND ")
+
+	var email Email
+	err = r.db.QueryRowx(query, args...).StructScan(&email)
+	return email.ToEmail(), err
+}
+
+func (r EmailRepository) GetEmails() ([]emails.Email, error) {
+	query := `
+	SELECT id, created_at, template_name, recipients, subject, context
+	FROM emails;
+	`
+	rows, err := r.db.Queryx(query)
+	if err != nil {
+		return []emails.Email{}, err
+	}
+	defer rows.Close()
+
+	// Scan emails and convert them to domain objects
+	res := []emails.Email{}
+	for rows.Next() {
+		var email Email
+		err = rows.StructScan(&email)
+		if err != nil {
+			return []emails.Email{}, err
+		}
+		res = append(res, *email.ToEmail())
+	}
+
+	return res, nil
 }
