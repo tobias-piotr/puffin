@@ -85,19 +85,27 @@ func (s *EmailAPISuite) TestSendEmail() {
 	tests.RecordCall(req, router)
 
 	// Send an email
-	body = []byte(`{"to":["test@gmail.com"],"template_name":"test","subject":"Test","data":{"name":"Test Name"}}`)
+	body = []byte(`{"recipients":["test@gmail.com"],"template_name":"test","subject":"Test","data":{"name":"Test Name"}}`)
 	req = tests.CreateRequest("POST", "/api/v1/emails", body)
 	response := tests.RecordCall(req, router)
 
 	s.Equal(http.StatusOK, response.Code)
-	// TODO: Replace with database check
-	s.Equal(1, len(s.Dialer.Emails))
+
+	// Check that the email was saved
+	req = tests.CreateRequest("GET", "/api/v1/emails", nil)
+	response = tests.RecordCall(req, router)
+
+	responseBody := []emails.Email{}
+	json.Unmarshal(response.Body.Bytes(), &responseBody)
+
+	s.Equal(http.StatusOK, response.Code)
+	s.Equal(1, len(responseBody))
 }
 
 func (s *EmailAPISuite) TestSendEmailNoTemplate() {
 	router := server.CreateServer(&server.Options{DB: s.DB})
 
-	body := []byte(`{"to":["test@gmail.com"],"template_name":"test","subject":"Test","data":{"name":"Test Name"}}`)
+	body := []byte(`{"recipients":["test@gmail.com"],"template_name":"test","subject":"Test","data":{"name":"Test Name"}}`)
 	req := tests.CreateRequest("POST", "/api/v1/emails", body)
 	response := tests.RecordCall(req, router)
 

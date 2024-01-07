@@ -58,7 +58,7 @@ func TestCreateTemplate(t *testing.T) {
 }
 
 func TestCreateDuplicateTemplate(t *testing.T) {
-	repo := &DummyEmailRepository{[]Template{{uuid.New(), time.Now(), "Test Name", "<h1>Test Content</h1>"}}}
+	repo := &DummyEmailRepository{[]Template{{uuid.New(), time.Now(), "Test Name", "<h1>Test Content</h1>"}}, []Email{}}
 	srv := NewEmailService(repo, &DummyEmailClient{})
 	_, error := srv.CreateNewTemplate(&TemplateData{"Test Name", "<h1>Test Content</h1>"})
 	assert.NotNil(t, error)
@@ -66,7 +66,7 @@ func TestCreateDuplicateTemplate(t *testing.T) {
 }
 
 func TestGetTemplates(t *testing.T) {
-	repo := &DummyEmailRepository{[]Template{{uuid.New(), time.Now(), "Test Name", "<h1>Test Content</h1>"}}}
+	repo := &DummyEmailRepository{[]Template{{uuid.New(), time.Now(), "Test Name", "<h1>Test Content</h1>"}}, []Email{}}
 	srv := NewEmailService(repo, &DummyEmailClient{})
 	result, error := srv.GetTemplates()
 	assert.Nil(t, error)
@@ -75,17 +75,17 @@ func TestGetTemplates(t *testing.T) {
 
 func TestSendEmail(t *testing.T) {
 	client := &DummyEmailClient{}
-	repo := &DummyEmailRepository{[]Template{{uuid.New(), time.Now(), "Test Name", "<h1>Test Content</h1>"}}}
+	repo := &DummyEmailRepository{[]Template{{uuid.New(), time.Now(), "Test Name", "<h1>Test Content</h1>"}}, []Email{}}
 	srv := NewEmailService(repo, client)
-	error := srv.SendEmail(&EmailData{TemplateName: "Test Name", Subject: "Test", To: []string{"test@gmail.com"}})
+	error := srv.SendEmail(&EmailData{TemplateName: "Test Name", Subject: "Test", Recipients: []string{"test@gmail.com"}})
 	assert.Nil(t, error)
 }
 
 func TestSendEmailNoTemplate(t *testing.T) {
 	client := &DummyEmailClient{}
-	repo := &DummyEmailRepository{[]Template{}}
+	repo := &DummyEmailRepository{[]Template{}, []Email{}}
 	srv := NewEmailService(repo, client)
-	error := srv.SendEmail(&EmailData{TemplateName: "Test Name", Subject: "Test", To: []string{"test@gmail.com"}})
+	error := srv.SendEmail(&EmailData{TemplateName: "Test Name", Subject: "Test", Recipients: []string{"test@gmail.com"}})
 	assert.NotNil(t, error)
 	assert.Equal(t, "Template with name Test Name does not exist", error.Error())
 }
