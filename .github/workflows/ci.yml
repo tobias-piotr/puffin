@@ -46,4 +46,8 @@ jobs:
       - name: Run tests
         run: go test -race -vet=off ./...
 
-      # TODO: Add swagger
+      - name: Install swag
+        run: go install github.com/swaggo/swag/cmd/swag@latest
+
+      - name: Generate docs
+        run: swag init

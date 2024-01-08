@@ -10,6 +10,10 @@ import (
 	"github.com/go-mail/mail"
 )
 
+// @title Puffin
+// @version 0.1.0
+// @description Sending emails made complicated
+// @BasePath /puffin
 func main() {
 	db := database.GetConnection(os.Getenv("DATABASE_DSN"))
 	database.Migrate(db)

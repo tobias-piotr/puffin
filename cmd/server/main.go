@@ -7,11 +7,15 @@ import (
 	"os"
 	"time"
 
+	"github.com/swaggo/http-swagger/v2"
+
 	emails "puffin/emails/api"
 	"puffin/libs/api"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+
+	_ "puffin/docs"
 )
 
 type HealthResponse struct {
@@ -38,6 +42,10 @@ func CreateServer(opts *Options) chi.Router {
 
 	r.Route(fmt.Sprintf("%s/api", prefix), func(r chi.Router) {
 		r.Get("/health", CheckHealth)
+
+		r.Get("/docs/*", httpSwagger.Handler(
+			httpSwagger.URL(fmt.Sprintf("%s/api/docs/doc.json", prefix)),
+		))
 
 		r.Route("/v1", func(r chi.Router) {
 			emails.Register(r, opts.DB, opts.SmtpDialer)
