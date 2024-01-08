@@ -27,3 +27,7 @@ test: ## Run tests with ignored caching
 .PHONY: migration
 migration: ## Generate migration
 	goose create $(name) sql && mv *_$(name).sql libs/database/migrations/
+
+.PHONY: docs
+docs: ## Generate docs
+	swag init

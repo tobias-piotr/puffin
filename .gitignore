@@ -25,3 +25,8 @@ go.work
 
 # Temporary files
 tmp/
+
+# Docs files
+docs/docs.go
+docs/swagger.json
+docs/swagger.yaml
