@@ -1,0 +1,10 @@
+package pages
+
+import "puffin/templates/layouts"
+import "puffin/templates/components"
+
+templ ErrorPage() {
+	@layouts.Base() {
+		@components.Error()
+	}
+}

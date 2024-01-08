@@ -36,6 +36,7 @@ require (
 )
 
 require (
+	github.com/a-h/templ v0.2.513
 	github.com/go-mail/mail v2.3.1+incompatible
 	github.com/go-playground/validator/v10 v10.16.0
 	github.com/jmoiron/sqlx v1.3.5

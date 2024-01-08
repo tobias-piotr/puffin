@@ -4,12 +4,7 @@ import (
 	"net/http"
 
 	"puffin/emails"
-	"puffin/emails/database"
 	"puffin/libs/api"
-	"puffin/libs/smtp"
-
-	"github.com/go-chi/chi/v5"
-	"github.com/jmoiron/sqlx"
 )
 
 type EmailHandler struct {
@@ -89,23 +84,4 @@ func (h *EmailHandler) GetEmails(w http.ResponseWriter, r *http.Request) {
 	}
 
 	api.Respond(w, http.StatusOK, emails)
-}
-
-func Register(r chi.Router, db *sqlx.DB, smtpDialer smtp.Dialer) {
-	handler := EmailHandler{
-		emails.NewEmailService(
-			database.NewEmailRepository(db),
-			smtp.NewSmtpClient(smtpDialer),
-		),
-	}
-
-	r.Route("/templates", func(r chi.Router) {
-		r.Post("/", handler.CreateNewTemplate)
-		r.Get("/", handler.GetTemplates)
-	})
-
-	r.Route("/emails", func(r chi.Router) {
-		r.Post("/", handler.SendEmail)
-		r.Get("/", handler.GetEmails)
-	})
 }

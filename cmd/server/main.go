@@ -9,7 +9,8 @@ import (
 
 	"github.com/swaggo/http-swagger/v2"
 
-	emails "puffin/emails/api"
+	emailAPI "puffin/emails/api"
+	emailApp "puffin/emails/app"
 	"puffin/libs/api"
 
 	"github.com/go-chi/chi/v5"
@@ -39,6 +40,7 @@ func CreateServer(opts *Options) chi.Router {
 	r.Use(SetContentType)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
+	// TODO: Add CORS and some middleware for authentication
 
 	r.Route(fmt.Sprintf("%s/api", prefix), func(r chi.Router) {
 		r.Get("/health", CheckHealth)
@@ -47,9 +49,13 @@ func CreateServer(opts *Options) chi.Router {
 			httpSwagger.URL(fmt.Sprintf("%s/api/docs/doc.json", prefix)),
 		))
 
-		r.Route("/v1", func(r chi.Router) {
-			emails.Register(r, opts.DB, opts.SmtpDialer)
+		r.Route("/", func(r chi.Router) {
+			emailAPI.Register(r, opts.DB, opts.SmtpDialer)
 		})
+	})
+
+	r.Route("/app", func(r chi.Router) {
+		emailApp.Register(r, opts.DB, opts.SmtpDialer)
 	})
 
 	return r
