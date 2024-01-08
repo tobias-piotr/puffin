@@ -18,6 +18,8 @@ ENV DEBUG=true
 
 # Install air for hot reloading
 RUN go install github.com/cosmtrek/air@latest
+# Install templ to hot generate templates
+RUN go install github.com/a-h/templ/cmd/templ@latest
 
 ENTRYPOINT ["air"]
 
