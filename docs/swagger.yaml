@@ -1,0 +1,143 @@
+basePath: /puffin
+definitions:
+  api.APIError:
+    properties:
+      detail:
+        additionalProperties:
+          type: string
+        type: object
+      error:
+        type: string
+    type: object
+  emails.Email:
+    properties:
+      context:
+        additionalProperties: {}
+        type: object
+      created_at:
+        type: string
+      id:
+        type: string
+      recipients:
+        items:
+          type: string
+        type: array
+      subject:
+        type: string
+      template_name:
+        type: string
+    type: object
+  emails.EmailData:
+    properties:
+      context:
+        additionalProperties: {}
+        type: object
+      recipients:
+        items:
+          type: string
+        type: array
+      subject:
+        type: string
+      template_name:
+        type: string
+    required:
+    - recipients
+    - subject
+    - template_name
+    type: object
+  emails.Template:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+    type: object
+  emails.TemplateData:
+    properties:
+      content:
+        type: string
+      name:
+        maxLength: 255
+        minLength: 3
+        type: string
+    required:
+    - content
+    - name
+    type: object
+info:
+  contact: {}
+  description: Sending emails made complicated
+  title: Puffin
+  version: 0.1.0
+paths:
+  /api/v1/emails:
+    get:
+      description: Get a list of sent emails
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/emails.Email'
+            type: array
+      summary: Get emails
+      tags:
+      - emails
+    post:
+      description: Send an email using a template
+      parameters:
+      - description: Request body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/emails.EmailData'
+      responses:
+        "200":
+          description: OK
+      summary: Send email
+      tags:
+      - emails
+  /api/v1/templates:
+    get:
+      description: Get a list of existing email templates
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/emails.Template'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.APIError'
+      summary: Get templates
+      tags:
+      - templates
+    post:
+      description: Create a new email template
+      parameters:
+      - description: Request body
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/emails.TemplateData'
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/emails.Template'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/api.APIError'
+      summary: Create template
+      tags:
+      - templates
+swagger: "2.0"
